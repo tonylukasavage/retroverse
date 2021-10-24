@@ -1,5 +1,3 @@
-import os
-
 banks = [
     # bank 0
     {
@@ -111,68 +109,3 @@ banks = [
         'offset':  0
     }
 ]
-
-file_in = open(".\\roms\\cv2.nes", "rb")
-data = file_in.read()
-file_in.close()
-
-
-def insertFunction(file, loc, bank, bytes, padding):
-    count = len(bytes)
-    offset = banks[bank]['offset']
-    funcRomLoc = banks[bank]['rom']['start'] + offset
-    funcRamLoc = banks[bank]['ram']['start'] + offset
-    banks[bank]['offset'] += count
-
-    # ensure we have space
-    if banks[bank]['offset'] + banks[bank]['rom']['start'] > banks[bank]['rom']['end']:
-        # TODO: switch to another bank
-        raise Exception("Out of space on bank " + str(bank))
-
-    # replace existing code to point to new jsr
-    locLow = funcRamLoc & 0x00FF
-    locHigh = (funcRamLoc & 0xFF00) >> 8
-    jsrCode = bytearray([0x20, locLow, locHigh])
-    file.seek(loc)
-    file.write(jsrCode)
-
-    # write new jsr to bank free space
-    file.seek(funcRomLoc)
-    file.write(bytearray(bytes))
-
-
-with open(".\\tmp\\cv2-edit.nes", "wb") as file_out:
-    file_out.write(data)
-
-    # z's in the title
-    file_out.seek(0x0101A2)
-    file_out.write(
-        bytearray([0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A]))
-
-    # stop door entry
-    insertFunction(file_out, 0xC80E, 3, [0x68, 0x68, 0x4C, 0x4A, 0x87], 0)
-    # file_out.seek(0xC80E)
-    # file_out.write(bytearray([0x4C, 0x4A, 0x87]))
-
-# LDA *$54
-# BNE BACK
-# LDA *$53
-# CMP  # $30
-# BCS BACK
-
-# LDA $50
-# ASL
-# RTS
-
-# BACK:
-# PLA
-# PLA
-# LDA  # $01
-# STA $6000
-# JMP $874A
-
-    # stop door entry
-    # file_out.seek(0xC7AF)
-    # file_out.write(bytearray([0x4C, 0x4A, 0x87]))
-
-    file_out.close()
