@@ -25,7 +25,7 @@ function loadSession(game)
 		end
 	end
 	saveSession()
-	print(utils.dump(session))
+	-- print(utils.dump(session))
 end
 
 function saveSession(game)
@@ -33,20 +33,27 @@ function saveSession(game)
 		session.currentGame = game
 	end
 	userdata.set("session", json.encode(session))
+	savestate.save("..\\tmp\\" .. session.currentGame .. ".State")
 end
 
 function loadGame(game)
 		saveSession(game)
-		client.openrom("..\\tmp\\" .. game .. "-edit.nes");
+
+		local rom_path = "..\\tmp\\" .. game .. "-retroverse.nes"
+		print("opening rom " .. rom_path)
+		client.openrom(rom_path);
 		client.displaymessages(false);
 
 		save_file = "..\\tmp\\" .. game .. ".State"
 		default_save_file = ".\\games\\"  .. game .. ".base.State"
 		if utils.file_exists(save_file) then
+			print("loading savefile " .. save_file)
 			savestate.load(save_file)
 		else
+			print("loading savefile " .. default_save_file)
 			savestate.load(default_save_file)
 		end
+		print("loaded rom " .. rom_path)
 end
 
 if userdata.get("started") == nil then

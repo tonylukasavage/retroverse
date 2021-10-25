@@ -2,7 +2,7 @@ import os
 from main.generator import generate
 
 BIZHAWK_VERSION = "2.5.2"
-ROM_DEFAULT = "cv2-edit.nes"
+ROM_DEFAULT = "cv2-retroverse.nes"
 
 cwd = os.getcwd()
 

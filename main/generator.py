@@ -41,6 +41,6 @@ def generate(games=[]):
             mod.execute(data)
 
         # write the modified in-memory rom data to a new rom file
-        with open(".\\tmp\\" + game + "-edit.nes", "wb") as file_out:
+        with open(".\\tmp\\" + game + "-retroverse.nes", "wb") as file_out:
             file_out.write(data)
             file_out.close()
