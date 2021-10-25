@@ -37,7 +37,7 @@ end
 
 function loadGame(game)
 		saveSession(game)
-		client.openrom("..\\roms\\" .. game .. ".nes");
+		client.openrom("..\\tmp\\" .. game .. "-edit.nes");
 		client.displaymessages(false);
 
 		save_file = "..\\tmp\\" .. game .. ".State"

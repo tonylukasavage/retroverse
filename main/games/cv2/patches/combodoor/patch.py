@@ -1,23 +1,23 @@
-from injector import injectFunction
-from assembler import assemble
+from main.injector import injectFunction
+from main.assembler import assemble
 from os.path import abspath, dirname, join
-from games.cv2.banks import banks
+from main.games.cv2.banks import banks
+from main.utils import applyDiff
 
 
-def execute(rom):
+def execute(rom_data):
+    dirpath = dirname(abspath(__file__))
+
     # change the first door to be an open door for combo travel
-    rom[0x84CB] = 0x14
-    rom[0x84D3] = 0x28
+    applyDiff(rom_data, join(dirpath, 'door.diff.json'))
 
     # read the asm for this patch
-    dirpath = dirname(abspath(__file__))
-    asmpath = join(dirpath, 'door.asm')
-    file_in = open(asmpath, "r")
+    file_in = open(join(dirpath, 'door.asm'), "r")
     door_data = assemble(file_in.read())
     file_in.close()
 
     # inject the door handling code
-    injectFunction(rom, 0xC80E, banks, 3, door_data)
+    injectFunction(rom_data, 0xC80E, banks, 3, door_data)
 
 
 patch = {

@@ -1,31 +1,46 @@
-import os
-# from games.cv2 import banks
-# from injector import insertFunction
-import games.cv2.patch
-
-# print(games.cv2.patch)
-games.cv2.patch.init()
-
-# file_in = open(".\\roms\\cv2.nes", "rb")
-# data = file_in.read()
-# file_in.close()
+from importlib import import_module
+from os import listdir
+from os.path import isfile, join, dirname, abspath
 
 
-# with open(".\\tmp\\cv2-edit.nes", "wb") as file_out:
-#     file_out.write(data)
+def generate(games=[]):
+    # make sure we have games
+    if len(games) == 0:
+        print("must provide a list of games")
+        raise SystemExit
 
-#     # z's in the title
-#     file_out.seek(0x0101A2)
-#     file_out.write(
-#         bytearray([0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A]))
+    # process patches for each game in the combo
+    for game in games:
+        # load the rom into memory
+        rom_file = ".\\roms\\" + game + ".nes"
+        print('loading rom ' + rom_file)
+        file_in = open(rom_file, "rb")
+        data = bytearray(file_in.read())
+        file_in.close()
 
-#     # stop door entry
-#     insertFunction(file_out, 0xC80E, 3, [0x68, 0x68, 0x4C, 0x4A, 0x87], 0)
-#     # file_out.seek(0xC80E)
-#     # file_out.write(bytearray([0x4C, 0x4A, 0x87]))
+        # get a list of all patches
+        patch_dir = join(dirname(abspath(__file__)), 'games', game, 'patches')
+        patch_files = list(map(lambda x: x.replace('.py', ''), [
+            f for f in listdir(patch_dir)]))
 
-#     # stop door entry
-#     # file_out.seek(0xC7AF)
-#     # file_out.write(bytearray([0x4C, 0x4A, 0x87]))
+        # execute each patch in order
+        for p in patch_files:
+            # See if we're loading a mod file or directory
+            isPatchFile = isfile(join(patch_dir, p + '.py'))
+            isPatchDir = isfile(join(patch_dir, p, 'patch.py'))
 
-#     file_out.close()
+            # skip non-patch files/dirs
+            if not (isPatchFile or isPatchDir):
+                continue
+
+            # Load the module and execute the patch
+            mod_path = 'main.games.' + game + '.patches.' + \
+                (p + '.patch' if isPatchDir else p)
+            print("executing patch '" + mod_path + "'")
+            mod = import_module(mod_path)
+            mod.execute(data)
+
+        # write the modified in-memory rom data to a new rom file
+        with open(".\\tmp\\" + game + "-edit.nes", "wb") as file_out:
+            file_out.write(data)
+            file_out.close()

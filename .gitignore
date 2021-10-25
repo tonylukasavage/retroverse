@@ -2,3 +2,5 @@ bizhawk
 roms
 tmp
 *.pyc
+*.deb
+*.nes
