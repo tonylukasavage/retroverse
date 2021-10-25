@@ -1,11 +1,11 @@
 import os
 
 BIZHAWK_VERSION = "2.5.2"
-ROM_DEFAULT = "cv2.nes"
+ROM_DEFAULT = "cv2-edit.nes"
 
 cwd = os.getcwd()
 bin = os.path.join(cwd, "bizhawk", BIZHAWK_VERSION, "Emuhawk.exe")
-rom = os.path.join(cwd, "roms", ROM_DEFAULT)
+rom = os.path.join(cwd, "tmp", ROM_DEFAULT)
 script = "--lua=" + os.path.join(cwd, "emulator", "retroverse.lua")
 cmd = " ".join([bin, rom, script])
 print(cmd)

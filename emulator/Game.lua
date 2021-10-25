@@ -10,7 +10,8 @@ Game.new = function(name)
 	self.state = utils.decodeJsonFile(".\\games\\" .. self.name .. ".json")
 	self.stateFile = ".\\games\\" .. self.name .. ".State"
 
-	function self.load(isStart=false)
+	function self.load(isStart)
+		isStart = isStart or false
 		-- load rom
 		client.openrom(".\\roms\\" .. self.name .. ".nes")
 		client.displaymessages(false);
@@ -30,7 +31,7 @@ Game.new = function(name)
 		-- save inventiry
 	end
 
-	function self.udpateItem(name,
+	--function self.udpateItem(name,
 
 	return self
 end

@@ -5,8 +5,8 @@ Session.new = function(games)
 	local self = {}
 
 	self.games = {}
-	for g in games do
-		self.games.insert(Game.new(g))
+	for i,g in pairs(games) do
+		table.insert(self.games, Game.new(g))
 	end
 
 	function self.start()
