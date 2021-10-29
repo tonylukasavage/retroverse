@@ -1,4 +1,9 @@
 import json
+import os
+
+
+def mkdirp(path):
+    os.makedirs(path, 511, True)
 
 
 def applyDiff(rom_data, diff_json_file):

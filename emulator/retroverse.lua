@@ -25,7 +25,7 @@ function loadSession(game)
 		end
 	end
 	saveSession()
-	-- print(utils.dump(session))
+	print(utils.dump(session))
 end
 
 function saveSession(game)
@@ -44,7 +44,9 @@ function loadGame(game)
 		client.openrom(rom_path);
 		client.displaymessages(false);
 
-		save_file = "..\\tmp\\" .. game .. ".State"
+		save_file = "..\\tmp\\" .. game .. "-retroverse.State"
+		-- save_file = "..\\tmp\\" .. game .. "-retroverse.NesHawk.QuickSave1.State"
+		-- save_file = "..\\tmp\\" .. game .. "-retroverse.test.State"
 		default_save_file = ".\\games\\"  .. game .. ".base.State"
 		if utils.file_exists(save_file) then
 			print("loading savefile " .. save_file)
@@ -66,6 +68,8 @@ while true do
 	if session.currentGame == "cv2" and memory.readbyte(0x6000) == 1 then
 		memory.writebyte(0x6000, 0)
 		loadGame("metroid")
+	elseif session.currentGame == "metroid" and memory.readbyte(0x56) == 2 and memory.readbyte(0x4F) == 0x0E and memory.readbyte(0x50) == 0x01 then
+		loadGame("cv2")
 	end
 	emu.frameadvance();
 end

@@ -11,6 +11,13 @@ def execute(rom_data):
     # create new door to left of morph ball for combo travel
     applyDiff(rom_data, join(dirpath, 'door.diff.json'))
 
+    # RAM location to start game
+    # 7:C0BE
+
+    # new map section
+    # 0x4F == 0x0E
+    # 0x50 == 0x01
+
     # # read the asm for this patch
     # file_in = open(join(dirpath, 'door.asm'), "r")
     # door_data = assemble(file_in.read())
