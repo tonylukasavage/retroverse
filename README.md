@@ -23,7 +23,7 @@ Here's a simple annotated example for Castlevania 2, used only in testing:
 
 ```
 def execute(data):
-	# This list of hex values represents the letter "Z" on the CV2 title screen
+	# This list of hex values represents 9 "Z" letters on the CV2 title screen
 	bytes = [0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A]
 
 	# The loc variable represents the location in the ROM data to which we are going
