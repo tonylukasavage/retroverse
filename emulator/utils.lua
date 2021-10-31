@@ -1,4 +1,5 @@
 local json = require "json"
+local inspect = require "inspect"
 local utils = {}
 
 function utils.readfile(path)
@@ -14,22 +15,17 @@ function utils.decodeJsonFile(path)
 	return json.decode(content)
 end
 
-function utils.dump(o)
-    if type(o) == 'table' then
-        local s = '{ '
-        for k,v in pairs(o) do
-                if type(k) ~= 'number' then k = '"'..k..'"' end
-                s = s .. '['..k..'] = ' .. utils.dump(v) .. ','
-        end
-        return s .. '} '
-    else
-        return tostring(o)
-    end
+function utils.inspect(o)
+    return inspect(o)
 end
 
 function utils.file_exists(name)
    local f=io.open(name,"r")
    if f~=nil then io.close(f) return true else return false end
+end
+
+function utils.current_dir()
+    return io.popen"cd":read'*l'
 end
 
 return utils

@@ -1,14 +1,20 @@
 from importlib import import_module
-from os import getcwd, listdir, makedirs
-from os.path import isfile, join, dirname, abspath
+from os import getcwd, listdir
+from os.path import isfile, join, dirname, abspath, exists
+from shutil import copyfile, rmtree
 from datetime import datetime
-from utils import mkdirp
+from romgen.utils import mkdirp
+
+# import now so they are available in modules
+import romgen
+from romgen import injector, assembler, utils, games
+from romgen.utils import writeFile
 
 
-def generate(games=[]):
+def generate(games, rom_dir, opts={}):
     cwd = getcwd()
-    rom_dir = join(cwd, 'roms')
     tmp_dir = join(cwd, 'tmp')
+    rg_dir = dirname(abspath(__file__))
     session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     # make sure we have games
@@ -16,9 +22,18 @@ def generate(games=[]):
         print("must provide a list of games")
         raise SystemExit
 
+    # clean tmp directory
+    print(opts)
+    if "clean" in opts and opts.get("clean") and exists(tmp_dir):
+        rmtree(tmp_dir)
+    mkdirp(tmp_dir)
+
     # create session directory
     session_dir = join(tmp_dir, session_id)
-    mkdirp(session_dir)
+    session_roms_dir = join(session_dir, 'roms')
+    session_states_dir = join(session_dir, 'states')
+    mkdirp(session_roms_dir)
+    mkdirp(session_states_dir)
 
     # process patches for each game in the combo
     for game in games:
@@ -30,7 +45,7 @@ def generate(games=[]):
         file_in.close()
 
         # get a list of all patches
-        patch_dir = join(dirname(abspath(__file__)), 'games', game, 'patches')
+        patch_dir = join(rg_dir, 'games', game, 'patches')
         patch_files = list(map(lambda x: x.replace('.py', ''), [
             f for f in listdir(patch_dir)]))
 
@@ -45,19 +60,20 @@ def generate(games=[]):
                 continue
 
             # Load the module and execute the patch
-            mod_path = 'main.games.' + game + '.patches.' + \
+            mod_path = 'romgen.games.' + game + '.patches.' + \
                 (p + '.patch' if isPatchDir else p)
             print("executing patch '" + mod_path + "'")
             mod = import_module(mod_path)
             mod.execute(data)
 
         # write the modified in-memory rom data to a new rom file in session directory
-        session_roms_dir = join(session_id, game, 'roms')
-        mkdirp(session_roms_dir)
-        with open(join(session_roms_dir, game + "-retroverse.nes"), "wb") as file_out:
-            file_out.write(data)
-            file_out.close()
+        writeFile(join(session_roms_dir, game + "-retroverse.nes"), data)
 
         # copy initial states into session directory
-        session_states_dir = join(session_id, game, 'states')
-        mkdirp(session_states_dir)
+        copyfile(join(rg_dir, 'games', game, game +
+                 '.base.State'), join(session_states_dir, game + '-retroverse.State'))
+
+    # write session id to file to be read by bizhawk lua
+    writeFile(join(tmp_dir, '.retroverse_session'), session_id, "w")
+
+    return session_id

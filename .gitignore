@@ -4,3 +4,4 @@ tmp
 *.pyc
 *.deb
 *.nes
+.retroverse_session

@@ -1,4 +1,5 @@
-import os
+from os import getcwd, system
+from os.path import join
 from romgen.generator import generate
 from romgen.utils import mkdirp
 
@@ -7,16 +8,17 @@ BIZHAWK_VERSION = "2.5.2"
 ROM_DEFAULT = "cv2-retroverse.nes"
 
 # define key paths
-cwd = os.getcwd()
-tmp_dir = os.path.join(cwd, "tmp")
-rom = os.path.join(tmp_dir, ROM_DEFAULT)
-bin = os.path.join(cwd, "tools", "bizhawk", BIZHAWK_VERSION, "Emuhawk.exe")
+cwd = getcwd()
+bin = join(cwd, "tools", "bizhawk", BIZHAWK_VERSION, "Emuhawk.exe")
 
 # create dist (tmp) directory and generate the rom(s)
-mkdirp(tmp_dir)
-generate(['cv2', 'metroid'])
+rom_dir = join(cwd, 'roms')
+session_id = generate(['cv2', 'metroid'], rom_dir, {"clean": True})
 
 # launch bizhawk with roms and retroverse lua scriptingg
-script = "--lua=" + os.path.join(cwd, "emulator", "retroverse.lua")
+tmp_dir = join(cwd, "tmp")
+rom = join(tmp_dir, session_id, 'roms', ROM_DEFAULT)
+script = "--lua=" + join(cwd, "emulator", "retroverse.lua")
 cmd = " ".join([bin, rom, script])
-os.system(cmd)
+print(cmd)
+system(cmd)

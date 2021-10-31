@@ -1,4 +1,3 @@
-import json
 import os
 
 
@@ -6,14 +5,7 @@ def mkdirp(path):
     os.makedirs(path, 511, True)
 
 
-def applyDiff(rom_data, diff_json_file):
-    file = open(diff_json_file, "r")
-    diff_json_text = file.read()
-    diff_json = json.loads(diff_json_text)
-    file.close()
-
-    for diff in diff_json:
-        loc, val = diff
-        while len(rom_data) < loc + 1:
-            rom_data.append(0xFF)
-        rom_data[loc] = val
+def writeFile(filepath, content, flags="wb"):
+    with open(filepath, flags) as file_out:
+        file_out.write(content)
+        file_out.close()

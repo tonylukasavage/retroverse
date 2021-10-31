@@ -1,3 +1,6 @@
+import json
+
+
 def injectFunction(rom, loc, banks, bankNum, bytes, padding=0):
     count = len(bytes)
     offset = banks[bankNum]['offset']
@@ -21,10 +24,19 @@ def injectFunction(rom, loc, banks, bankNum, bytes, padding=0):
 
     # replace the existing code with our new functiion
     rom[loc: loc + len(jsrCode)] = jsrCode
-    # file.seek(loc)
-    # file.write(jsrCode)
 
     # write new jsr to bank free space
     rom[funcRomLoc: funcRomLoc + len(bytes)] = bytearray(bytes)
-    # file.seek(funcRomLoc)
-    # file.write(bytearray(bytes))
+
+
+def applyDiff(rom_data, diff_json_file):
+    file = open(diff_json_file, "r")
+    diff_json_text = file.read()
+    diff_json = json.loads(diff_json_text)
+    file.close()
+
+    for diff in diff_json:
+        loc, val = diff
+        while len(rom_data) < loc + 1:
+            rom_data.append(0xFF)
+        rom_data[loc] = val

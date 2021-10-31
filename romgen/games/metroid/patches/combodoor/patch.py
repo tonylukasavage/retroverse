@@ -1,11 +1,11 @@
-from main.injector import injectFunction
-from main.assembler import assemble
+from romgen.games.metroid.banks import banks
+from romgen.injector import applyDiff, injectFunction
+from romgen.assembler import assemble
 from os.path import abspath, dirname, join
-from main.games.cv2.banks import banks
-from main.utils import applyDiff
 
 
 def execute(rom_data):
+
     dirpath = dirname(abspath(__file__))
 
     # create new door to left of morph ball for combo travel
