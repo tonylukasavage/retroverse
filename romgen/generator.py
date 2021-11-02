@@ -74,6 +74,7 @@ def generate(games, rom_dir, opts={}):
                  '.base.State'), join(session_states_dir, game + '-retroverse.State'))
 
     # write session id to file to be read by bizhawk lua
-    writeFile(join(tmp_dir, '.retroverse_session'), session_id, "w")
+    writeFile(join(tmp_dir, 'session.json'),
+              '{"session_id":"' + session_id + '"}', "w")
 
     return session_id

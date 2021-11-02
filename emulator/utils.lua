@@ -28,4 +28,17 @@ function utils.current_dir()
     return io.popen"cd":read'*l'
 end
 
+function utils.trim(str)
+    return string.gsub(str, "%s+", "")
+end
+
+function utils.indexOf(array, value)
+    for i, v in pairs(array) do
+        if v == value then
+            return i
+        end
+    end
+    return nil
+end
+
 return utils
