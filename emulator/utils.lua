@@ -1,5 +1,5 @@
-local json = require "json"
-local inspect = require "inspect"
+local json = require "deps.json"
+local inspect = require "deps.inspect"
 local utils = {}
 
 function utils.readfile(path)

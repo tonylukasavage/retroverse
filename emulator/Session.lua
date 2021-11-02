@@ -1,5 +1,5 @@
 local config = require "config"
-local json = require "json"
+local json = require "deps.json"
 local utils = require "utils"
 local session = {}
 
