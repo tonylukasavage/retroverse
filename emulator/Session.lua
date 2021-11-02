@@ -3,70 +3,38 @@ local json = require "json"
 local utils = require "utils"
 local session = {}
 
-function session.id()
-	if userdata.containskey("session_id") then
-        return userdata.get("session_id")
-    else
-        local session_id = utils.trim(utils.readfile(config.session_file))
-        userdata.set("session_id", session_id)
-        return session_id
-    end
-end
-
 function session.dir()
-    return config.tmp_dir .. "\\" .. session.id()
-end
-
-function session.game()
-    return session._data.currentGame
-end
-
-session._data = nil
-function session.data()
-    if session._data == nil then
-        session.load_session()
-    end
-    return session._data
+    return config.tmp_dir .. "\\" .. session.data.session_id
 end
 
 function session.load_session(games)
-    print("session_staarted: " .. (userdata.get("session_started") or "nil"))
-    userdata.set("session_started", true)
-	if userdata.get("session_data") == nil then
-        print("creating new session")
-        session._data = {
-            id=session.id(),
-            currentGame=games[1],
-            games=games
-        }
+    local data = json.decode(utils.readfile(config.session_file))
+    if data.current_game == nil then
+        data.current_game = games[1]
+        data.games = games
         session.save_session()
-    else
-        print("retrieving session from userdata")
-        session._data = json.decode(userdata.get("session_data"))
     end
-
-	-- print(utils.inspect(session._data))
+    session.data = data
+    print(session.data)
 end
 
 function session.save_session()
-    userdata.set("session_data", json.encode(session._data))
-    print(utils.inspect(userdata.get("session_data")))
-    print("session saved to userdata")
+    utils.writefile(config.session_file, json.encode(session.data))
 end
 
 function session.save_state()
     -- run any game-specifc pre save code
-    require("games." .. session.game()).pre_save()
+    require("games." .. session.data.current_game).pre_save()
 
     -- save the bizhawk state
-    local save_file = session.dir() .. "\\states\\" .. session.game() .. "-retroverse.State"
+    local save_file = session.dir() .. "\\states\\" .. session.data.current_game .. "-retroverse.State"
     savestate.save(save_file)
     print("state saved at " .. save_file)
 end
 
 function session.load_game(new_game)
     session.save_state()
-    session._data.currentGame = new_game
+    session.data.current_game = new_game
     session.save_session()
 
     -- load the rom for the new game
@@ -85,11 +53,11 @@ function session.load_game(new_game)
 end
 
 function session.next_game()
-    local new_index = utils.indexOf(session._data.games, session.game()) + 1
-    if new_index > #session._data.games then
+    local new_index = utils.indexOf(session.data.games, session.data.current_game) + 1
+    if new_index > #session.data.games then
         new_index = 1
     end
-    return session._data.games[new_index]
+    return session.data.games[new_index]
 end
 
 return session

@@ -14,7 +14,7 @@ end
 
 while true do
     -- see if warp conditions are met for current game
-    if modules[session.game()].warp_check(session) then
+    if modules[session.data.current_game].warp_check(session) then
         session.load_game(session.next_game())
     end
 

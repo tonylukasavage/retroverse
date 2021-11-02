@@ -10,6 +10,12 @@ function utils.readfile(path)
 	return content
 end
 
+function utils.writefile(path, content)
+    local file = io.open(path, "w" )
+    file:write(content)
+    file:close()
+end
+
 function utils.decodeJsonFile(path)
 	local content = utils.readfile(path)
 	return json.decode(content)
