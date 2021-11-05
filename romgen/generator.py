@@ -13,7 +13,7 @@ from romgen.utils import writeFile
 
 def generate(games, rom_dir, opts={}):
     cwd = getcwd()
-    tmp_dir = join(cwd, 'tmp')
+    session_dir = join(cwd, 'tmp')
     rg_dir = dirname(abspath(__file__))
     session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -24,12 +24,15 @@ def generate(games, rom_dir, opts={}):
 
     # clean tmp directory
     print(opts)
-    if "clean" in opts and opts.get("clean") and exists(tmp_dir):
-        rmtree(tmp_dir)
-    mkdirp(tmp_dir)
+    if "clean" in opts and opts.get("clean") and exists(session_dir):
+        rmtree(session_dir)
+    mkdirp(session_dir)
+    # if "clean" in opts and opts.get("clean") and exists(tmp_dir):
+    #     rmtree(tmp_dir)
+    # mkdirp(tmp_dir)
 
     # create session directory
-    session_dir = join(tmp_dir, session_id)
+    # session_dir = join(tmp_dir, session_id)
     session_roms_dir = join(session_dir, 'roms')
     session_states_dir = join(session_dir, 'states')
     mkdirp(session_roms_dir)
@@ -74,7 +77,7 @@ def generate(games, rom_dir, opts={}):
                  '.base.State'), join(session_states_dir, game + '-retroverse.State'))
 
     # write session id to file to be read by bizhawk lua
-    writeFile(join(tmp_dir, 'session.json'),
+    writeFile(join(session_dir, 'session.json'),
               '{"session_id":"' + session_id + '"}', "w")
 
     return session_id

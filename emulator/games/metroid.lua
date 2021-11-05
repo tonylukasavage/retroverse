@@ -1,6 +1,37 @@
 local game = {}
 
-game.inventory = {}
+game.data = {
+    name="metroid",
+    items={
+        {
+            name="Morph Ball",
+            isOwned=false,
+            loc=0x6878,
+            val=0x01,
+            func="bit_update"
+        }
+    }
+}
+
+function game.init()
+
+end
+
+-- function game.init()
+--     game.inventory = {
+--         morph_ball=false,
+--         missiles=0,
+--         missile_max=0,
+--         long_beam=false,
+--         energy_tanks=0,
+--         bomb=false,
+--         ice_beam=false,
+--         high_jump_boots=false,
+--         screw_attack=false,
+--         wave_beam=false,
+--         varia_suit=false
+--     }
+-- end
 
 function game.warp_check()
     return memory.readbyte(0x4F) == 0x0E

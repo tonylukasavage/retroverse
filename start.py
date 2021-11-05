@@ -16,8 +16,8 @@ rom_dir = join(cwd, 'roms')
 session_id = generate(['cv2', 'metroid'], rom_dir, {"clean": True})
 
 # launch bizhawk with roms and retroverse lua scriptingg
-tmp_dir = join(cwd, "tmp")
-rom = join(tmp_dir, session_id, 'roms', ROM_DEFAULT)
+session_dir = join(cwd, "tmp")
+rom = join(session_dir, 'roms', ROM_DEFAULT)
 script = "--lua=" + join(cwd, "emulator", "retroverse.lua")
 cmd = " ".join([bin, rom, script])
 print(cmd)
