@@ -38,9 +38,9 @@ function session.save_session(modules)
     utils.writefile(config.session_file, json.encode(session.data))
 end
 
-function session.save_state()
+function session.save_state(mod)
     -- run any game-specifc pre save code
-    require("games." .. session.data.current_game_name).pre_save()
+    mod.pre_save()
 
     -- save the bizhawk state
     local save_file = config.session_dir .. "\\states\\" .. session.data.current_game_name .. "-retroverse.State"
@@ -49,7 +49,7 @@ function session.save_state()
 end
 
 function session.load_game(new_game, modules)
-    session.save_state()
+    session.save_state(modules[session.data.current_game_name])
     session.data.current_game_name = new_game
     session.save_session(modules)
 

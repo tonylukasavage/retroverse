@@ -27,7 +27,7 @@ end
 
 function Game:create_item_from_session(session, item)
     if session.data.games ~= nil then
-        local session_game = session.data.games[self.name]
+        local session_game = utils.find(session.data.games, function(g) return g.name == self.name end)
         if session_game ~= nil then
             local session_item = utils.find(session_game.items, function(i) return i.id == item.id end)
             if session_item ~= nil then
